@@ -1,0 +1,92 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'd:\projects\statist_plot\frmStatist.ui'
+#
+# Created: Sun May 24 16:58:52 2009
+#      by: PyQt4 UI code generator 4.4.4
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt4 import QtCore, QtGui
+
+class Ui_dlgStatistics(object):
+    def setupUi(self, dlgStatistics):
+        dlgStatistics.setObjectName("dlgStatistics")
+        dlgStatistics.resize(659, 331)
+        self.gridLayout = QtGui.QGridLayout(dlgStatistics)
+        self.gridLayout.setObjectName("gridLayout")
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.lblLayer = QtGui.QLabel(dlgStatistics)
+        self.lblLayer.setObjectName("lblLayer")
+        self.verticalLayout.addWidget(self.lblLayer)
+        self.cmbLayers = QtGui.QComboBox(dlgStatistics)
+        self.cmbLayers.setObjectName("cmbLayers")
+        self.verticalLayout.addWidget(self.cmbLayers)
+        self.gridLayout.addLayout(self.verticalLayout, 0, 0, 2, 1)
+        spacerItem = QtGui.QSpacerItem(314, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem, 0, 1, 1, 1)
+        self.verticalLayout_5 = QtGui.QVBoxLayout()
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
+        self.widget = QtGui.QWidget(dlgStatistics)
+        self.widget.setObjectName("widget")
+        self.verticalLayout_5.addWidget(self.widget)
+        self.gridLayout.addLayout(self.verticalLayout_5, 1, 1, 5, 1)
+        self.verticalLayout_2 = QtGui.QVBoxLayout()
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.lblField = QtGui.QLabel(dlgStatistics)
+        self.lblField.setObjectName("lblField")
+        self.verticalLayout_2.addWidget(self.lblField)
+        self.cmbFields = QtGui.QComboBox(dlgStatistics)
+        self.cmbFields.setObjectName("cmbFields")
+        self.verticalLayout_2.addWidget(self.cmbFields)
+        self.gridLayout.addLayout(self.verticalLayout_2, 2, 0, 1, 1)
+        self.verticalLayout_3 = QtGui.QVBoxLayout()
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.chkUseTextFields = QtGui.QCheckBox(dlgStatistics)
+        self.chkUseTextFields.setObjectName("chkUseTextFields")
+        self.verticalLayout_3.addWidget(self.chkUseTextFields)
+        self.gridLayout.addLayout(self.verticalLayout_3, 3, 0, 1, 1)
+        self.verticalLayout_4 = QtGui.QVBoxLayout()
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.lblResult = QtGui.QLabel(dlgStatistics)
+        self.lblResult.setObjectName("lblResult")
+        self.verticalLayout_4.addWidget(self.lblResult)
+        self.lstStatistics = QtGui.QListWidget(dlgStatistics)
+        self.lstStatistics.setAlternatingRowColors(True)
+        self.lstStatistics.setObjectName("lstStatistics")
+        self.verticalLayout_4.addWidget(self.lstStatistics)
+        self.gridLayout.addLayout(self.verticalLayout_4, 4, 0, 1, 1)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.progressBar = QtGui.QProgressBar(dlgStatistics)
+        self.progressBar.setProperty("value", QtCore.QVariant(24))
+        self.progressBar.setObjectName("progressBar")
+        self.horizontalLayout_2.addWidget(self.progressBar)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.btnStop = QtGui.QPushButton(dlgStatistics)
+        self.btnStop.setEnabled(False)
+        self.btnStop.setObjectName("btnStop")
+        self.horizontalLayout.addWidget(self.btnStop)
+        self.buttonBox = QtGui.QDialogButtonBox(dlgStatistics)
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Close)
+        self.buttonBox.setObjectName("buttonBox")
+        self.horizontalLayout.addWidget(self.buttonBox)
+        self.horizontalLayout_2.addLayout(self.horizontalLayout)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 5, 0, 1, 1)
+
+        self.retranslateUi(dlgStatistics)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), dlgStatistics.accept)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), dlgStatistics.reject)
+        QtCore.QMetaObject.connectSlotsByName(dlgStatistics)
+
+    def retranslateUi(self, dlgStatistics):
+        dlgStatistics.setWindowTitle(QtGui.QApplication.translate("dlgStatistics", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        self.lblLayer.setText(QtGui.QApplication.translate("dlgStatistics", "Input vector layer:", None, QtGui.QApplication.UnicodeUTF8))
+        self.lblField.setText(QtGui.QApplication.translate("dlgStatistics", "Target field:", None, QtGui.QApplication.UnicodeUTF8))
+        self.chkUseTextFields.setText(QtGui.QApplication.translate("dlgStatistics", "Enable text fields statistics", None, QtGui.QApplication.UnicodeUTF8))
+        self.lblResult.setText(QtGui.QApplication.translate("dlgStatistics", "Statistics output:", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnStop.setText(QtGui.QApplication.translate("dlgStatistics", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+
