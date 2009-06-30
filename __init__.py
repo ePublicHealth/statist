@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-mVersion = "0.1.0"
+mVersion = "0.1.1"
 #*****************************************************************************************************************
 # Statist
 # --------------------------------------------------
@@ -33,7 +33,7 @@ def name():
 	return "Statist plus"
 
 def description():
-	return "Calculate statistics for selected objects"
+	return "Calculate and show statistics for a field"
 
 def version():
 	return "0.1.1"
