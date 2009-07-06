@@ -3,40 +3,17 @@
 [+] add
 [-] remove/bugfix
 
-11.05.2009
-  [+] checkbox for displaying text and numeric fields separately
-  [*] translations update
-
-04.05.2009
-  [*] now plugin located in Modules menu (Statist menu is removed)
-  [*] rearrrange items in statistics output
-  [*] modify plugin description
-  [-] fixed dialog title in .ui file
-  [+] add tooltips to actions
+06.07.2009
+  [*] GUI optimizations (GUI was fully rewrited)
+  [*] all icons moved to icons subdir, resource file update
+  [-] count value now has integer type
+  [+] possibility to copy statistics output to clipboard
   [+] russian and ukrainian translations
 
-01.05.2009
-  [*] new original icons for actions
-  [*] update main dialog window .ui file
-  [*] icons filenames correction
-  [+] now statistics calculates automatically after every field change. You don't need press any button.
+05.07.2009
+  [+] check if there is vector layers in project on plugin startup
+  [*] fulltext labels in statistics output
 
-29.04.2009
-  [*] code formatting
-  [-] removed some duplication code
-
-27.04.2009
-  [+] helper functions
-  [+] statistic calculation for the whole layer (numeric fields)
-  [+] statistic calculation for the selected features (numeric fields)
-  [+] statistic calculation for the whole layer (string fields)
-  [+] statistic calculation for the selected features (string fields)
-  [-] statistic calculation for the whole layer (all field types)
-
-26.04.2009
-  [+] statistic calculation for the whole layer (all field types)
-  [+] i18n support
-
-25.04.2009 
-  [!] initial version of Statist
-  [+] plugin files and interface created
+04.07.2009
+  [!] initial version of StatistPlus based on Statist 0.1.5
+  [+] added frequency distribution histogram

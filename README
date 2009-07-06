@@ -24,7 +24,7 @@ HOW IT WORK
     - count (shows how many records the statistics are for)
 
 LICENSING INFORMATION
-  Statist is copyright (C) 2009 Alexander Bruy (voltron@ua.fm)
+  Statist is copyright (C) 2009 Alexander Bruy (alexander.bruy@gmail.com)
   Some code was adapted from "fTools", (C) 2008 by Carson J.Q. Farmer
   Translation and i18n code was adapted from "Geoprocessing Plugin", (C) 2008 by Dr. Horst Duester,
   Stefan Ziegler
@@ -35,6 +35,7 @@ LICENSING INFORMATION
 
 ACKNOWLEDGEMENTS
   The following people contributed to Statist:
-    Oleg Seliverstov
+    Oleg Seliverstov (http://geography.in.ua)
+    Maxim Dubinin (http://gis-lab.info)
   
   And all those who have reported bugs/fixes/suggestions/comments/etc.

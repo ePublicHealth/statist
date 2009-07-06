@@ -1,3 +1,7 @@
 TODO
-  1. Add frequency distribution histogram
-  2. Use another font for text fields OR add checkbox for enable text-field statistics
+  1. Save statistics output and histogram on disk
+  2. Change histogram size when window size changed
+  3. X axis label must be a field name
+  4. Add "median" value to statistics output
+  5. Check if matplotlib installed
+  6. Debug histogram creation

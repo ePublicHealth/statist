@@ -24,7 +24,7 @@
     - общее количество записей
 
 ЛИЦЕНЗИЯ
-  Statist is copyright (C) 2009 Alexander Bruy (voltron@ua.fm)
+  Statist is copyright (C) 2009 Alexander Bruy (alexander.bruy@gmail.com)
   Часть кода была адаптирована из "fTools", (C) 2008 by Carson J.Q. Farmer
   В основе кода интернационализации лежит код из "Geoprocessing Plugin", (C) 2008 by Dr. Horst Duester,
   Stefan Ziegler
@@ -35,6 +35,7 @@
 
 БЛАГОДАРНОСТИ
   Помощь в разработке и улучшении Statist оказали:
-    Oleg Seliverstov
+    Oleg Seliverstov (http://geography.in.ua)
+    Maxim Dubinin (http://gis-lab.info)
   
   И все те, кто сообщал об ошибках, присылал патчи, высказывал предложения и комментарии.

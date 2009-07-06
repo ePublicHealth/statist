@@ -10,7 +10,7 @@
 # Based on partially rewritten 'Basic statistics' from fTools,
 # (C) 2009 Carson Farmer.
 #
-#  Copyright (C) 2009 Alexander Bruy (voltron@ua.fm)
+#  Copyright (C) 2009 Alexander Bruy (alexander.bruy@gmail.com)
 #
 #  This source is free software; you can redistribute it and/or modify it under
 #  the terms of the GNU General Public License as published by the Free
@@ -33,7 +33,8 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
 import os.path, sys
-import doStatist
+
+import doStatist, utils
 
 import resources
 
@@ -45,7 +46,7 @@ class statistPlugin:
 		except:
 			self.QgisVersion = unicode( QGis.qgisVersion )[ 0 ]
 		
-		userPluginPath = QFileInfo( QgsApplication.qgisUserDbFilePath() ).path() + "/python/plugins/statistplus"
+		userPluginPath = QFileInfo( QgsApplication.qgisUserDbFilePath() ).path() + "/python/plugins/statist"
 		systemPluginPath = QgsApplication.prefixPath() + "/python/plugins/statist"
 		# install translator for i18n
 		localeFullName = QLocale.system().name()
@@ -63,12 +64,15 @@ class statistPlugin:
 		
 		# static messages
 		self.wrongVersion = QCoreApplication.translate( "Statist", "Quantum GIS version detected: " +
-		str( self.QgisVersion ) + "\n" + "Statist plus plugin requires version at least 1.0.0!\n" +
+		self.QgisVersion + "\n" + "Statist plugin requires version at least 1.0.0!\n" +
 		"Plugin not loaded." )
 		
-		self.aboutString = QCoreApplication.translate( "Statist","Statist 0.1.1\nQuantum GIS Python plugin\n" +
-		"The plugin will calculate basic statistics on selected field for vector layers\n\n" +
-		"Author: Alexander Bruy\n" + "Mail: voltron@ua.fm" )
+		self.aboutString = QCoreApplication.translate( "Statist", "Statist\nQuantum GIS Python plugin\n" +
+		"The plugin calculate statistics on selected field of vector layer\n\n" +
+		"Author: Alexander Bruy\n" + "Mail: alexander.bruy@gmail.com" )
+		
+		self.noLayers = QCoreApplication.translate( "Statist", "Plugin will not run, because there is\n" +
+		"no vector layers in this project" )
 	
 	def initGui( self ):
 		# check Qgis version
@@ -77,29 +81,33 @@ class statistPlugin:
 			return None
 		
 		# create plugin menu
-		self.calcStat = QAction( QCoreApplication.translate( "StatistMenu", "Statistics" ), self.iface.mainWindow() )
-		self.calcStat.setIcon( QIcon( ":statist.png" ) )
-		self.calcStat.setWhatsThis( "Calculate basic statistics" )
-		self.aboutStat = QAction( QCoreApplication.translate( "StatistMenu", "About..." ), self.iface.mainWindow() )
-		self.aboutStat.setIcon( QIcon( ":information.png" ) )
-		self.aboutStat.setWhatsThis( "About Statist plus" )
-		self.iface.addPluginToMenu( "Statist", self.calcStat )
-		self.iface.addPluginToMenu( "Statist", self.aboutStat )
+		self.calcStats = QAction( QCoreApplication.translate( "mnuStatist", "Statistics" ), self.iface.mainWindow() )
+		self.calcStats.setIcon( QIcon( ":/icons/statist.png" ) )
+		self.calcStats.setWhatsThis( "Calculate statistics" )
+		self.aboutStatist = QAction( QCoreApplication.translate( "mnuStatist", "About..." ), self.iface.mainWindow() )
+		self.aboutStatist.setIcon( QIcon( ":/icons/information.png" ) )
+		self.aboutStatist.setWhatsThis( "About Statist plugin" )
+		self.iface.addPluginToMenu( "Statist", self.calcStats )
+		self.iface.addPluginToMenu( "Statist", self.aboutStatist )
 		
 		# add toolbar icon
-		self.iface.addToolBarIcon( self.calcStat )
+		self.iface.addToolBarIcon( self.calcStats )
 		
-		QObject.connect( self.calcStat, SIGNAL( "triggered()" ), self.doCalcStats )
-		QObject.connect( self.aboutStat, SIGNAL( "triggered()" ), self.doAbout )
+		QObject.connect( self.calcStats, SIGNAL( "triggered()" ), self.doCalcStats )
+		QObject.connect( self.aboutStatist, SIGNAL( "triggered()" ), self.doAbout )
 	
 	def unload( self ):
-		self.iface.removeToolBarIcon( self.calcStat )
-		self.iface.removePluginMenu( "Statist", self.calcStat )
-		self.iface.removePluginMenu( "Statist", self.aboutStat )
+		self.iface.removeToolBarIcon( self.calcStats )
+		self.iface.removePluginMenu( "Statist", self.calcStats )
+		self.iface.removePluginMenu( "Statist", self.aboutStatist )
 	
 	def doAbout( self ):
 		QMessageBox.information( self.iface.mainWindow(), "About Statist", self.aboutString )
 	
 	def doCalcStats( self ):
+		nLayers = len( utils.getLayersNames( "vector" ) )
+		if nLayers == 0:
+			QMessageBox.warning( self.iface.mainWindow(), "Statist", self.noLayers )
+			return None
 		d = doStatist.dlgStatist( self.iface )
 		d.exec_()

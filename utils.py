@@ -10,7 +10,7 @@
 # Based on partially rewritten 'Basic statistics' from fTools,
 # (C) 2009 Carson Farmer.
 #
-#  Copyright (C) 2009 Alexander Bruy (voltron@ua.fm)
+#  Copyright (C) 2009 Alexander Bruy (alexander.bruy@gmail.com)
 #
 #  This source is free software; you can redistribute it and/or modify it under
 #  the terms of the GNU General Public License as published by the Free

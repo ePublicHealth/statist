@@ -10,7 +10,7 @@
 # Based on partially rewritten 'Basic statistics' from fTools,
 # (C) 2009 Carson Farmer.
 #
-#  Copyright (C) 2009 Alexander Bruy (voltron@ua.fm)
+#  Copyright (C) 2009 Alexander Bruy (alexander.bruy@gmail.com)
 #
 #  This source is free software; you can redistribute it and/or modify it under
 #  the terms of the GNU General Public License as published by the Free
@@ -33,13 +33,14 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
 import os, math
+
 from frmStatist import Ui_dlgStatistics
+
 import utils
 
 import matplotlib
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-from matplotlib.font_manager import FontProperties
 
 import resources
 
@@ -51,17 +52,12 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		
 		# prepare figure
 		self.figure = Figure()
-		self.figure.set_figsize_inches( ( 4., 3.5 ) )
-		self.canvas = FigureCanvas( self.figure )
-		self.canvas.setParent( self.widget )
+		self.figure.set_figsize_inches( ( 4.3, 4.2 ) )
 		self.axes = self.figure.add_subplot( 111 )
-		#self.fp = FontProperties()
-		#self.fp.set_size( "xx-small" )
-		#self.figure.set_font_properties( self.fp )
-		#self.axes.set_fontsize( "xx-small" )
 		self.figure.suptitle( "Frequency distribution", fontsize = 12 )
-		#self.axes.set_title( "Frequency distribution", fontsize = 12 )
 		self.axes.grid( True )
+		self.canvas = FigureCanvas( self.figure )
+		self.canvas.setParent( self.widgetPlot )
 		
 		# for tracking layers change
 		QObject.connect( self.cmbLayers, SIGNAL( "currentIndexChanged(QString)" ), self.updateFields )
@@ -95,7 +91,7 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		if self.cmbLayers.currentText() == "":
 			QMessageBox.information( self, "Error!", self.tr( "Please specify target vector layer first" ) )
 		elif self.cmbFields.currentText() == "":
-			QMessageBox.information( self, "Error!", self.tr( "Please specify valid target field first" ) )
+			QMessageBox.information( self, "Error!", self.tr( "Please specify target field first" ) )
 		else:
 			vlayer = utils.getVectorLayerByName( self.cmbLayers.currentText() )
 			self.calculate( self.cmbLayers.currentText(), self.cmbFields.currentText() )
@@ -107,10 +103,21 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		QObject.connect( self.threadCalc, SIGNAL( "runFinished(PyQt_PyObject)" ), self.runFinishedFromThread )
 		QObject.connect( self.threadCalc, SIGNAL( "runStatus(PyQt_PyObject)" ), self.runStatusFromThread )
 		QObject.connect( self.threadCalc, SIGNAL( "runRange(PyQt_PyObject)" ), self.runRangeFromThread )
+		
+		QObject.disconnect( self.btnStop, SIGNAL( "clicked()" ), self.toClipboard )
+		self.btnStop.setText( self.tr( "Cancel" ) )
 		QObject.connect( self.btnStop, SIGNAL("clicked()" ), self.cancelThread )
 		self.btnStop.setEnabled( True )
+		
 		self.threadCalc.start()
 		return True
+	
+	def toClipboard( self ):
+		txt = ""
+		for i in range( self.lstStatistics.count() ):
+			txt += self.lstStatistics.item( i ).text() + "\n"
+		clipboard = QApplication.clipboard()
+		clipboard.setText( txt )
 	
 	def cancelThread( self ):
 		self.threadCalc.stop()
@@ -118,21 +125,20 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 	def runFinishedFromThread( self, output ):
 		self.threadCalc.stop()
 		self.lstStatistics.addItems( output[ 0 ] )
-		self.btnStop.setEnabled( False )
-		#QMessageBox.information( self, "DEBUG", str( output ) )
+		QObject.disconnect( self.btnStop, SIGNAL( "clicked()" ), self.cancelThread )
+		self.btnStop.setText( self.tr ("Copy" ) )
+		QObject.connect( self.btnStop, SIGNAL( "clicked()" ), self.toClipboard )
+		#self.btnStop.setEnabled( False )
+		
 		self.axes.clear()
 		self.axes.grid( True )
-		#self.fp.set_size( "xx-small" )
-		#self.figure.set_font_properties( self.fp )
-		#self.axes.set_fontsize( "xx-small" )
 		self.figure.suptitle( "Frequency distribution", fontsize = 12 )
-		#self.axes.set_title( "Frequency distribution" )
 		self.axes.set_ylabel( "Count", fontsize = 8 )
 		self.axes.set_xlabel( "Values", fontsize = 8 )
-		x = output [ 2 ]
+		x = output[ 2 ]
 		self.axes.hist( x, 50, alpha=0.5, histtype = "bar" )
-		#self.axes.plot( x )
 		self.canvas.draw()
+		
 		return True
 	
 	def runStatusFromThread( self, status ):
@@ -219,16 +225,16 @@ class workThread( QThread ):
 					sumVal = sumVal + lenVal
 					nElement += 1
 					self.emit( SIGNAL( "runStatus(PyQt_PyObject)" ), nElement )
-			nVal= float( len( values ) )
+			nVal= len( values )
 			if nVal > 0.00:
 				meanVal = sumVal / nVal
 			lstStats = []
-			lstStats.append( QCoreApplication.translate( "statResult", "N: " ) + "\t" + unicode( nVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Min. len.: " ) + "\t" + unicode( minVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Max. len.: " ) + "\t" + unicode( maxVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Mean. len: " ) + "\t" + unicode( meanVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Filled: " ) + "\t" + unicode( fillVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Empty: " ) + "\t" + unicode( emptyVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Count:" ) + "\t" + unicode( nVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Minimum length:" ) + "\t" + unicode( minVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Maximum length:" ) + "\t" + unicode( maxVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Mean lengtn:" ) + "\t" + unicode( meanVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Filled:" ) + "\t" + unicode( fillVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Empty:" ) + "\t" + unicode( emptyVal ) )
 			return ( lstStats, [], values )
 		else:
 			stdVal = 0
@@ -271,7 +277,7 @@ class workThread( QThread ):
 					sumVal = sumVal + value
 					nElement += 1
 					self.emit( SIGNAL( "runStatus(PyQt_PyObject)" ), nElement )
-			nVal= float( len( values ) )
+			nVal= len( values )
 			if nVal > 0.00:
 				meanVal = sumVal / nVal
 				if meanVal != 0.00:
@@ -280,11 +286,11 @@ class workThread( QThread ):
 					stdVal = math.sqrt( stdVal / nVal )
 					cvVal = stdVal / meanVal
 			lstStats = []
-			lstStats.append( QCoreApplication.translate( "statResult", "N: " ) + "\t" + unicode( nVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Min: " ) + "\t" + unicode( minVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Max: " ) + "\t" + unicode( maxVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Sum: " ) + "\t" + unicode( sumVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Mean: " ) + "\t" + unicode( meanVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "StdDev: " ) + "\t" + unicode( stdVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "CV: " ) + "\t" + unicode( cvVal ))
+			lstStats.append( QCoreApplication.translate( "statResult", "Count:" ) + "\t" + unicode( nVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Minimum value:" ) + "\t" + unicode( minVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Maximum value:" ) + "\t" + unicode( maxVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Sum:" ) + "\t" + unicode( sumVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Mean value:" ) + "\t" + unicode( meanVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Standard deviation:" ) + "\t" + unicode( stdVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "CV:" ) + "\t" + unicode( cvVal ))
 			return ( lstStats, [], values )
