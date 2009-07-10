@@ -5,3 +5,5 @@ TODO
   4. Add "median" value to statistics output
   5. Check if matplotlib installed
   6. Debug histogram creation
+  7. Switching between plot and histogram
+  8. Histogram formatting toolbar
