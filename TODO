@@ -7,3 +7,5 @@ TODO
   6. Debug histogram creation
   7. Switching between plot and histogram
   8. Histogram formatting toolbar
+  9. Add "R" value to statistics output
+  10. Replace ListWidget with TableWidget for better usability
