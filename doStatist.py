@@ -38,7 +38,7 @@ from frmStatist import Ui_dlgStatistics
 
 import utils
 
-import matplotlib
+from matplotlib import rc
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
@@ -49,6 +49,17 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		QDialog.__init__( self )
 		self.iface = iface
 		self.setupUi( self )
+		
+		# setup table columns
+		self.tblStatistics.setColumnWidth( 0, 213 )
+		self.tblStatistics.setColumnWidth( 1, 90 )
+		
+		# enable russian labels
+		rc( 'font', **{'family':'serif'} )
+		#rc( 'text', usetex = True )
+		#rc( 'text.latex', unicode = True )
+		#rc( 'text.latex', preamble = '\usepackage[utf8]{inputenc}' )
+		#rc( 'text.latex', preamble = '\usepackage[russian]{babel}' )
 		
 		# prepare figure
 		self.figure = Figure()
@@ -98,7 +109,8 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 	
 	def calculate( self, layerName, fieldName ):
 		vLayer = utils.getVectorLayerByName( layerName )
-		self.lstStatistics.clear()
+		self.tblStatistics.clearContents()
+		self.tblStatistics.setRowCount( 0 )
 		self.threadCalc = workThread( self.iface.mainWindow(), self, vLayer, fieldName )
 		QObject.connect( self.threadCalc, SIGNAL( "runFinished(PyQt_PyObject)" ), self.runFinishedFromThread )
 		QObject.connect( self.threadCalc, SIGNAL( "runStatus(PyQt_PyObject)" ), self.runStatusFromThread )
@@ -114,8 +126,8 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 	
 	def toClipboard( self ):
 		txt = ""
-		for i in range( self.lstStatistics.count() ):
-			txt += self.lstStatistics.item( i ).text() + "\n"
+		for i in range( len( self.results ) ):
+			txt += self.results[ i ] + "\n"
 		clipboard = QApplication.clipboard()
 		clipboard.setText( txt )
 	
@@ -124,7 +136,19 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 	
 	def runFinishedFromThread( self, output ):
 		self.threadCalc.stop()
-		self.lstStatistics.addItems( output[ 0 ] )
+		self.results = output[ 0 ]
+		
+		n = len( self.results )
+		self.tblStatistics.setRowCount( n )
+		for r in range( n ):
+			tmp = self.results[ r ].split( ":" )
+			item = QTableWidgetItem( tmp[ 0 ] )
+			self.tblStatistics.setItem( r, 0, item )
+			item = QTableWidgetItem( tmp[ 1 ] )
+			self.tblStatistics.setItem( r, 1, item )
+		self.tblStatistics.verticalHeader().hide()
+		
+		# enable copy to clipboard
 		QObject.disconnect( self.btnStop, SIGNAL( "clicked()" ), self.cancelThread )
 		self.btnStop.setText( self.tr ("Copy" ) )
 		QObject.connect( self.btnStop, SIGNAL( "clicked()" ), self.toClipboard )
@@ -136,7 +160,9 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		self.axes.set_ylabel( "Count", fontsize = 8 )
 		self.axes.set_xlabel( "Values", fontsize = 8 )
 		x = output[ 2 ]
-		self.axes.hist( x, 50, alpha=0.5, histtype = "bar" )
+		n, bins, pathes = self.axes.hist( x, 18, alpha=0.5, histtype = "bar" )
+		QMessageBox.information( self, "DEBUG n", str( n ) )
+		QMessageBox.information( self, "DEBUG bins", str( bins ) )
 		self.canvas.draw()
 		
 		return True
@@ -229,16 +255,18 @@ class workThread( QThread ):
 			if nVal > 0.00:
 				meanVal = sumVal / nVal
 			lstStats = []
-			lstStats.append( QCoreApplication.translate( "statResult", "Count:" ) + "\t" + unicode( nVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Minimum length:" ) + "\t" + unicode( minVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Maximum length:" ) + "\t" + unicode( maxVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Mean lengtn:" ) + "\t" + unicode( meanVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Filled:" ) + "\t" + unicode( fillVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Empty:" ) + "\t" + unicode( emptyVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Count:" ) + unicode( nVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Minimum length:" ) + unicode( minVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Maximum length:" ) + unicode( maxVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Mean lengtn:" ) + unicode( meanVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Filled:" ) + unicode( fillVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Empty:" ) + unicode( emptyVal ) )
 			return ( lstStats, [], values )
 		else:
 			stdVal = 0
 			cvVal = 0
+			rVal = 0
+			medianVal = 0
 			# selection
 			if vlayer.selectedFeatureCount() != 0:
 				selFeat = vlayer.selectedFeatures()
@@ -278,6 +306,14 @@ class workThread( QThread ):
 					nElement += 1
 					self.emit( SIGNAL( "runStatus(PyQt_PyObject)" ), nElement )
 			nVal= len( values )
+			rVal = maxVal - minVal
+			if nVal > 1:
+				lstVal = values
+				lstVal.sort()
+				if ( nVal % 2 ) == 0:
+					medianVal = 0.5 * ( lstVal[ ( nVal - 1 )/ 2 ] + lstVal[ ( nVal ) / 2 ] )
+				else:
+					medianVal = lstVal[ ( nVal + 1 ) / 2 ]
 			if nVal > 0.00:
 				meanVal = sumVal / nVal
 				if meanVal != 0.00:
@@ -286,11 +322,13 @@ class workThread( QThread ):
 					stdVal = math.sqrt( stdVal / nVal )
 					cvVal = stdVal / meanVal
 			lstStats = []
-			lstStats.append( QCoreApplication.translate( "statResult", "Count:" ) + "\t" + unicode( nVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Minimum value:" ) + "\t" + unicode( minVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Maximum value:" ) + "\t" + unicode( maxVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Sum:" ) + "\t" + unicode( sumVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Mean value:" ) + "\t" + unicode( meanVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "Standard deviation:" ) + "\t" + unicode( stdVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "CV:" ) + "\t" + unicode( cvVal ))
+			lstStats.append( QCoreApplication.translate( "statResult", "Count:" ) + unicode( nVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Minimum value:" ) + unicode( minVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Maximum value:" ) + unicode( maxVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Swing:" ) + unicode( rVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Sum:" ) + unicode( sumVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Mean value:" ) + unicode( meanVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Median value:" ) + unicode( medianVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Standard deviation:" ) + unicode( stdVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "CV:" ) + unicode( cvVal ))
 			return ( lstStats, [], values )

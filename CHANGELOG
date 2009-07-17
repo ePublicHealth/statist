@@ -3,6 +3,11 @@
 [+] add
 [-] remove/bugfix
 
+16.07.2009
+  [+] added swing value to statistics output (for numeric values)
+  [+] added median value to statistics output (for numeric values)
+  [*] ListWidget for statistics output replaced with TableWidget
+
 06.07.2009
   [*] GUI optimizations (GUI was fully rewrited)
   [*] all icons moved to icons subdir, resource file update

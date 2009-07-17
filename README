@@ -14,6 +14,8 @@ HOW IT WORK
     - sum
     - standard deviation
     - count (shows how many records the statistics are for)
+    - swing value
+    - median
   
   For string fields you can receive next information:
     - minimum string length

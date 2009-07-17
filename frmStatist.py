@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'frmStatist.ui'
 #
-# Created: Mon Jul 06 14:52:37 2009
+# Created: Thu Jul 16 15:59:07 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -38,11 +38,6 @@ class Ui_dlgStatistics(object):
         self.lblResult = QtGui.QLabel(self.widgetStats)
         self.lblResult.setObjectName("lblResult")
         self.gridLayout.addWidget(self.lblResult, 5, 0, 1, 2)
-        self.lstStatistics = QtGui.QListWidget(self.widgetStats)
-        self.lstStatistics.setMaximumSize(QtCore.QSize(16777215, 136))
-        self.lstStatistics.setAlternatingRowColors(True)
-        self.lstStatistics.setObjectName("lstStatistics")
-        self.gridLayout.addWidget(self.lstStatistics, 6, 0, 1, 2)
         self.progressBar = QtGui.QProgressBar(self.widgetStats)
         self.progressBar.setProperty("value", QtCore.QVariant(24))
         self.progressBar.setObjectName("progressBar")
@@ -59,6 +54,19 @@ class Ui_dlgStatistics(object):
         self.buttonBox.setObjectName("buttonBox")
         self.horizontalLayout.addWidget(self.buttonBox)
         self.gridLayout.addLayout(self.horizontalLayout, 7, 1, 1, 1)
+        self.tblStatistics = QtGui.QTableWidget(self.widgetStats)
+        self.tblStatistics.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.tblStatistics.setAlternatingRowColors(True)
+        self.tblStatistics.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
+        self.tblStatistics.setCornerButtonEnabled(False)
+        self.tblStatistics.setObjectName("tblStatistics")
+        self.tblStatistics.setColumnCount(2)
+        self.tblStatistics.setRowCount(0)
+        item = QtGui.QTableWidgetItem()
+        self.tblStatistics.setHorizontalHeaderItem(0, item)
+        item = QtGui.QTableWidgetItem()
+        self.tblStatistics.setHorizontalHeaderItem(1, item)
+        self.gridLayout.addWidget(self.tblStatistics, 6, 0, 1, 2)
         self.horizontalLayout_2.addWidget(self.widgetStats)
         self.widgetPlot = QtGui.QWidget(dlgStatistics)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -82,4 +90,6 @@ class Ui_dlgStatistics(object):
         self.chkUseTextFields.setText(QtGui.QApplication.translate("dlgStatistics", "Enable statistics for text fields", None, QtGui.QApplication.UnicodeUTF8))
         self.lblResult.setText(QtGui.QApplication.translate("dlgStatistics", "Statistics output:", None, QtGui.QApplication.UnicodeUTF8))
         self.btnStop.setText(QtGui.QApplication.translate("dlgStatistics", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+        self.tblStatistics.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("dlgStatistics", "Parameter", None, QtGui.QApplication.UnicodeUTF8))
+        self.tblStatistics.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("dlgStatistics", "Value", None, QtGui.QApplication.UnicodeUTF8))
 
