@@ -2,7 +2,6 @@ TODO
   1. Save statistics output and histogram on disk
   2. Change histogram size when window size changed
   3. X axis label must be a field name
-  4. Check if matplotlib installed
-  5. Debug histogram creation
-  6. Switching between plot and histogram
-  7. Histogram formatting toolbar
+  4. Debug histogram creation
+  5. Switching between plot and histogram
+  6. Histogram formatting toolbar

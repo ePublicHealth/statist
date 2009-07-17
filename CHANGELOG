@@ -3,6 +3,10 @@
 [+] add
 [-] remove/bugfix
 
+17.07.2009
+  [+] at plugin startup check for matplotlib module and show error
+  message when it not installed
+
 16.07.2009
   [+] added swing value to statistics output (for numeric values)
   [+] added median value to statistics output (for numeric values)

@@ -38,9 +38,11 @@ from frmStatist import Ui_dlgStatistics
 
 import utils
 
-from matplotlib import rc
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
+try:
+	from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+	from matplotlib.figure import Figure
+except ImportError:
+	QMessageBox.warning( None, "Error!", QCoreApplication.translate( "Statist", "Couldn't import Python module 'matplotlib' for plotting. Without it you won't be able to run Statist." ) )
 
 import resources
 
@@ -53,13 +55,6 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		# setup table columns
 		self.tblStatistics.setColumnWidth( 0, 213 )
 		self.tblStatistics.setColumnWidth( 1, 90 )
-		
-		# enable russian labels
-		rc( 'font', **{'family':'serif'} )
-		#rc( 'text', usetex = True )
-		#rc( 'text.latex', unicode = True )
-		#rc( 'text.latex', preamble = '\usepackage[utf8]{inputenc}' )
-		#rc( 'text.latex', preamble = '\usepackage[russian]{babel}' )
 		
 		# prepare figure
 		self.figure = Figure()
@@ -161,8 +156,17 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		self.axes.set_xlabel( "Values", fontsize = 8 )
 		x = output[ 2 ]
 		n, bins, pathes = self.axes.hist( x, 18, alpha=0.5, histtype = "bar" )
-		QMessageBox.information( self, "DEBUG n", str( n ) )
-		QMessageBox.information( self, "DEBUG bins", str( bins ) )
+		
+		#QMessageBox.information( self, "DEBUG n", str( n ) )
+		#QMessageBox.information( self, "DEBUG bins", str( bins ) )
+		#c = []
+		#for i in range( len( bins ) - 1 ):
+		#	s = bins[ i + 1 ] - bins[ i ]
+		#	c.append( bins[ i ] + (s / 2 ) )
+		#QMessageBox.information( self, "DEBUG means", str( c ) )
+		#QMessageBox.information( self, "DEBUG len", str( len( n ) ) + str( len( bins ) ) + str( len( c ) ) )
+		#self.axes.plot( c, n, "ro-" )
+		
 		self.canvas.draw()
 		
 		return True
