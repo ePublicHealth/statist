@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'frmStatist.ui'
 #
-# Created: Thu Jul 16 15:59:07 2009
+# Created: Wed Jul 29 21:35:51 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,8 @@ from PyQt4 import QtCore, QtGui
 class Ui_dlgStatistics(object):
     def setupUi(self, dlgStatistics):
         dlgStatistics.setObjectName("dlgStatistics")
-        dlgStatistics.resize(705, 349)
+        dlgStatistics.resize(744, 420)
+        dlgStatistics.setSizeGripEnabled(True)
         self.horizontalLayout_2 = QtGui.QHBoxLayout(dlgStatistics)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.widgetStats = QtGui.QWidget(dlgStatistics)
@@ -76,6 +77,48 @@ class Ui_dlgStatistics(object):
         self.widgetPlot.setSizePolicy(sizePolicy)
         self.widgetPlot.setMinimumSize(QtCore.QSize(340, 330))
         self.widgetPlot.setObjectName("widgetPlot")
+        self.gridLayout_2 = QtGui.QGridLayout(self.widgetPlot)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.layoutPlot = QtGui.QVBoxLayout()
+        self.layoutPlot.setObjectName("layoutPlot")
+        self.gridLayout_2.addLayout(self.layoutPlot, 0, 0, 1, 1)
+        self.groupBox = QtGui.QGroupBox(self.widgetPlot)
+        self.groupBox.setMaximumSize(QtCore.QSize(361, 65))
+        self.groupBox.setObjectName("groupBox")
+        self.gridLayout_3 = QtGui.QGridLayout(self.groupBox)
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.label = QtGui.QLabel(self.groupBox)
+        self.label.setMaximumSize(QtCore.QSize(40, 16777215))
+        self.label.setObjectName("label")
+        self.gridLayout_3.addWidget(self.label, 0, 0, 1, 1)
+        self.edMinX = QtGui.QDoubleSpinBox(self.groupBox)
+        self.edMinX.setMinimumSize(QtCore.QSize(0, 0))
+        self.edMinX.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.edMinX.setMaximum(999999999.99)
+        self.edMinX.setObjectName("edMinX")
+        self.gridLayout_3.addWidget(self.edMinX, 0, 1, 1, 1)
+        self.btnRefresh = QtGui.QPushButton(self.groupBox)
+        self.btnRefresh.setObjectName("btnRefresh")
+        self.gridLayout_3.addWidget(self.btnRefresh, 0, 3, 2, 1)
+        self.chkGrid = QtGui.QCheckBox(self.groupBox)
+        self.chkGrid.setObjectName("chkGrid")
+        self.gridLayout_3.addWidget(self.chkGrid, 0, 5, 1, 1)
+        self.label_2 = QtGui.QLabel(self.groupBox)
+        self.label_2.setMaximumSize(QtCore.QSize(40, 16777215))
+        self.label_2.setObjectName("label_2")
+        self.gridLayout_3.addWidget(self.label_2, 1, 0, 1, 1)
+        self.edMaxX = QtGui.QDoubleSpinBox(self.groupBox)
+        self.edMaxX.setMinimumSize(QtCore.QSize(0, 0))
+        self.edMaxX.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.edMaxX.setMaximum(999999999.99)
+        self.edMaxX.setObjectName("edMaxX")
+        self.gridLayout_3.addWidget(self.edMaxX, 1, 1, 1, 1)
+        self.chkPlot = QtGui.QCheckBox(self.groupBox)
+        self.chkPlot.setObjectName("chkPlot")
+        self.gridLayout_3.addWidget(self.chkPlot, 1, 5, 1, 1)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_3.addItem(spacerItem, 0, 4, 1, 1)
+        self.gridLayout_2.addWidget(self.groupBox, 1, 0, 1, 1)
         self.horizontalLayout_2.addWidget(self.widgetPlot)
 
         self.retranslateUi(dlgStatistics)
@@ -92,4 +135,9 @@ class Ui_dlgStatistics(object):
         self.btnStop.setText(QtGui.QApplication.translate("dlgStatistics", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
         self.tblStatistics.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("dlgStatistics", "Parameter", None, QtGui.QApplication.UnicodeUTF8))
         self.tblStatistics.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("dlgStatistics", "Value", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("dlgStatistics", "Xmin", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnRefresh.setText(QtGui.QApplication.translate("dlgStatistics", "Refresh", None, QtGui.QApplication.UnicodeUTF8))
+        self.chkGrid.setText(QtGui.QApplication.translate("dlgStatistics", "Show grid", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("dlgStatistics", "Xmax", None, QtGui.QApplication.UnicodeUTF8))
+        self.chkPlot.setText(QtGui.QApplication.translate("dlgStatistics", "As plot", None, QtGui.QApplication.UnicodeUTF8))
 

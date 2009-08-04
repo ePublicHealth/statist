@@ -1,7 +1,3 @@
 TODO
-  1. Save statistics output and histogram on disk
-  2. Change histogram size when window size changed
-  3. X axis label must be a field name
-  4. Debug histogram creation
-  5. Switching between plot and histogram
-  6. Histogram formatting toolbar
+  1. Save statistics output disk (?)
+  2. Debug histogram creation

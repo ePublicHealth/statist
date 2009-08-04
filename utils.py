@@ -34,7 +34,7 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import * 
 
-# Return list of names of all layers (vector, raster or both types) in QgsMapLayerRegistry 
+# return list of names of all layers (vector, raster or both types) in QgsMapLayerRegistry 
 def getLayersNames( layerType ):
 	layermap = QgsMapLayerRegistry.instance().mapLayers()
 	layerlist = []
@@ -51,7 +51,7 @@ def getLayersNames( layerType ):
 				layerlist.append( unicode( layer.name() ) )
 	return layerlist
 
-# Return list of names of all fields from input QgsVectorLayer
+# return list of names of all fields from input QgsVectorLayer
 def getFieldNames( vlayer ):
 	fieldmap = getFieldList( vlayer )
 	fieldlist = []
@@ -60,7 +60,7 @@ def getFieldNames( vlayer ):
 			fieldlist.append( unicode( field.name() ) )
 	return fieldlist
 
-# Return QgsVectorLayer from a layer name (as string)
+# return QgsVectorLayer from a layer name (as string)
 def getVectorLayerByName( myName ):
 	layermap = QgsMapLayerRegistry.instance().mapLayers()
 	for name, layer in layermap.iteritems():
@@ -70,7 +70,7 @@ def getVectorLayerByName( myName ):
 			else:
 				return None
 
-# Return the field list of a vector layer
+# return the field list of a vector layer
 def getFieldList( vlayer ):
 	vprovider = vlayer.dataProvider()
 	#feat = QgsFeature()
@@ -79,9 +79,30 @@ def getFieldList( vlayer ):
 	myFields = vprovider.fields()
 	return myFields
 
-# Return field type from it's name
+# return field type from it's name
 def getFieldType( vlayer, fieldName ):
 	fields = vlayer.dataProvider().fields()
 	for name, field in fields.iteritems():
 		if field.name() == fieldName:
 			return field.typeName()
+
+# return number of unique values in field
+def getUniqueValsCount( vlayer, fieldIndex, useSelection ):
+	vprovider = vlayer.dataProvider()
+	allAttrs = vprovider.attributeIndexes()
+	vprovider.select( allAttrs )
+	count = 0
+	values = []
+	if useSelection:
+		selection = vlayer.selectedFeatures()
+		for f in selection:
+			if f.attributeMap()[ fieldIndex ].toString() not in values:
+				values.append( f.attributeMap()[ fieldIndex ].toString() )
+				count += 1
+	else:
+		feat = QgsFeature()
+		while vprovider.nextFeature( feat ):
+			if feat.attributeMap()[ fieldIndex ].toString() not in values:
+				values.append( feat.attributeMap()[ fieldIndex ].toString() )
+				count += 1
+	return count

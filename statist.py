@@ -34,7 +34,7 @@ from PyQt4.QtGui import *
 from qgis.core import *
 import os.path, sys
 
-import doStatist, utils
+import doStatist, doAbout, utils
 
 import resources
 
@@ -77,7 +77,7 @@ class statistPlugin:
 	def initGui( self ):
 		# check Qgis version
 		if int( self.QgisVersion ) < 1:
-			QMessageBox.warning( self.iface.mainWindow(), "Statist", self.wrongVersion )
+			QMessageBox.warning( self.iface.mainWindow(), "Statist: Error", self.wrongVersion )
 			return None
 		
 		# create plugin menu
@@ -94,20 +94,22 @@ class statistPlugin:
 		self.iface.addToolBarIcon( self.calcStats )
 		
 		QObject.connect( self.calcStats, SIGNAL( "triggered()" ), self.doCalcStats )
-		QObject.connect( self.aboutStatist, SIGNAL( "triggered()" ), self.doAbout )
+		QObject.connect( self.aboutStatist, SIGNAL( "triggered()" ), self.showAbout )
 	
 	def unload( self ):
 		self.iface.removeToolBarIcon( self.calcStats )
 		self.iface.removePluginMenu( "Statist", self.calcStats )
 		self.iface.removePluginMenu( "Statist", self.aboutStatist )
 	
-	def doAbout( self ):
-		QMessageBox.information( self.iface.mainWindow(), "About Statist", self.aboutString )
+	def showAbout( self ):
+		#QMessageBox.information( self.iface.mainWindow(), self.tr( "About Statist" ), self.aboutString )
+		d = doAbout.dlgAbout( self.iface )
+		d.exec_()
 	
 	def doCalcStats( self ):
 		nLayers = len( utils.getLayersNames( "vector" ) )
 		if nLayers == 0:
-			QMessageBox.warning( self.iface.mainWindow(), "Statist", self.noLayers )
+			QMessageBox.warning( self.iface.mainWindow(), "Statist: Error", self.noLayers )
 			return None
 		d = doStatist.dlgStatist( self.iface )
 		d.exec_()

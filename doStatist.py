@@ -38,13 +38,18 @@ from frmStatist import Ui_dlgStatistics
 
 import utils
 
+# static messages
+msgError = QCoreApplication.translate( "Statist", "Couldn't import Python module 'matplotlib' for plotting. Without it you won't be able to run Statist." )
+
 try:
 	from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+	from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
 	from matplotlib.figure import Figure
+	import matplotlib.font_manager as FontManager
 except ImportError:
-	QMessageBox.warning( None, "Error!", QCoreApplication.translate( "Statist", "Couldn't import Python module 'matplotlib' for plotting. Without it you won't be able to run Statist." ) )
+	QMessageBox.warning( None, "Statist: Error", msgError )
 
-import resources
+#import resources
 
 class dlgStatist( QDialog, Ui_dlgStatistics ):
 	def __init__( self, iface ):
@@ -52,25 +57,46 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		self.iface = iface
 		self.setupUi( self )
 		
+		# dialog static text
+		self.plotTitle = QCoreApplication.translate( "Plot", "Frequency distribution" )
+		self.axisYTitle = QCoreApplication.translate( "Plot", "Count" )
+		
 		# setup table columns
 		self.tblStatistics.setColumnWidth( 0, 213 )
 		self.tblStatistics.setColumnWidth( 1, 90 )
 		
+		# determine font path
+		userPluginPath = QFileInfo( QgsApplication.qgisUserDbFilePath() ).path() + "/python/plugins/statist"
+		systemPluginPath = QgsApplication.prefixPath() + "/python/plugins/statist"
+		if QFileInfo( userPluginPath ).exists():
+			fontPath = userPluginPath + "/font/CharisSILR.ttf"
+		else:
+			fontPath = systemPluginPath + "/font/CharisSILR.ttf"
+		
 		# prepare figure
 		self.figure = Figure()
-		self.figure.set_figsize_inches( ( 4.3, 4.2 ) )
 		self.axes = self.figure.add_subplot( 111 )
-		self.figure.suptitle( "Frequency distribution", fontsize = 12 )
-		self.axes.grid( True )
+		self.fp = FontManager.FontProperties( fname = fontPath )
+		self.figure.suptitle( self.plotTitle, fontproperties = self.fp )
 		self.canvas = FigureCanvas( self.figure )
-		self.canvas.setParent( self.widgetPlot )
+		self.mpltoolbar = NavigationToolbar( self.canvas, self.widgetPlot )
+		self.layoutPlot.addWidget( self.canvas )
+		self.layoutPlot.addWidget( self.mpltoolbar )
 		
 		# for tracking layers change
 		QObject.connect( self.cmbLayers, SIGNAL( "currentIndexChanged(QString)" ), self.updateFields )
+		
+		# for figure customization
+		self.groupBox.hide()
+		QObject.connect( self.chkGrid, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
+		QObject.connect( self.chkPlot, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
+		QObject.connect( self.btnRefresh, SIGNAL( "clicked()" ), self.refreshPlot )
+		
 		# fill layers combobox
 		self.cmbLayers.clear()
 		lstLayers = utils.getLayersNames( "vector" )
 		self.cmbLayers.addItems( lstLayers )
+		
 		# reset some controls to default values
 		self.cmbFields.setCurrentIndex(-1)
 		self.progressBar.setValue( 0 )
@@ -79,6 +105,21 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 	
 	def updateFields( self ):
 		self.cmbFields.clear()
+		
+		self.tblStatistics.clearContents()
+		self.tblStatistics.setRowCount( 0 )
+		
+		QObject.disconnect( self.chkGrid, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
+		QObject.disconnect( self.chkPlot, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
+		self.edMinX.setValue( 0.0 )
+		self.edMaxX.setValue( 0.0 )
+		self.chkGrid.setCheckState( Qt.Unchecked )
+		self.chkPlot.setCheckState( Qt.Unchecked )
+		self.groupBox.hide()
+		self.axes.clear()
+		QObject.connect( self.chkGrid, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
+		QObject.connect( self.chkPlot, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
+		
 		layName = unicode( self.cmbLayers.currentText() )
 		if layName != "":
 			vLayer = utils.getVectorLayerByName( layName )
@@ -94,10 +135,20 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 			self.cmbFields.setCurrentIndex(-1)
 	
 	def startCalculation( self ):
+		QObject.disconnect( self.chkGrid, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
+		QObject.disconnect( self.chkPlot, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
+		self.edMinX.setValue( 0.0 )
+		self.edMaxX.setValue( 0.0 )
+		self.chkGrid.setCheckState( Qt.Unchecked )
+		self.chkPlot.setCheckState( Qt.Unchecked )
+		self.axes.clear()
+		QObject.connect( self.chkGrid, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
+		QObject.connect( self.chkPlot, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
+		
 		if self.cmbLayers.currentText() == "":
-			QMessageBox.information( self, "Error!", self.tr( "Please specify target vector layer first" ) )
+			QMessageBox.information( self, "Statist: Error", self.tr( "Please specify target vector layer first" ) )
 		elif self.cmbFields.currentText() == "":
-			QMessageBox.information( self, "Error!", self.tr( "Please specify target field first" ) )
+			QMessageBox.information( self, "Statist: Error", self.tr( "Please specify target field first" ) )
 		else:
 			vlayer = utils.getVectorLayerByName( self.cmbLayers.currentText() )
 			self.calculate( self.cmbLayers.currentText(), self.cmbFields.currentText() )
@@ -126,6 +177,53 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		clipboard = QApplication.clipboard()
 		clipboard.setText( txt )
 	
+	def refreshPlot( self ):
+		self.axes.clear()
+		self.axes.grid( self.chkGrid.isChecked() )
+		if self.edMinX.value() == self.edMaxX.value():
+			# histogram
+			if not self.chkPlot.isChecked():
+				self.axes.hist( self.valuesX, 18, alpha=0.5, histtype = "bar" )
+			# plot
+			else:
+				n, bins, pathes = self.axes.hist( self.valuesX, 18, alpha=0.5, histtype = "bar" )
+				self.axes.clear()
+				self.axes.grid( self.chkGrid.isChecked() )
+				c = []
+				for i in range( len( bins ) - 1 ):
+					s = bins[ i + 1 ] - bins[ i ]
+					c.append( bins[ i ] + (s / 2 ) )
+				
+				self.axes.plot( c, n, "ro-" )
+		else:
+			xRange = []
+			if self.edMinX.value() > self.edMaxX.value():
+				xRange.append( self.edMaxX.value() )
+				xRange.append( self.edMinX.value() )
+			else:
+				xRange.append( self.edMinX.value() )
+				xRange.append( self.edMaxX.value() )
+			# histogram
+			if not self.chkPlot.isChecked():
+				self.axes.hist( self.valuesX, 18, xRange, alpha=0.5, histtype = "bar" )
+			# plot
+			else:
+				n, bins, pathes = self.axes.hist( self.valuesX, 18, xRange, alpha=0.5, histtype = "bar" )
+				self.axes.clear()
+				self.axes.grid( self.chkGrid.isChecked() )
+				c = []
+				for i in range( len( bins ) - 1 ):
+					s = bins[ i + 1 ] - bins[ i ]
+					c.append( bins[ i ] + (s / 2 ) )
+				
+				self.axes.plot( c, n, "ro-" )
+				self.axes.set_xlim( xRange[ 0 ], xRange[ 1 ] )
+		self.axes.set_ylabel( self.axisYTitle, fontproperties = self.fp )
+		field = unicode( self.cmbFields.currentText() )
+		self.axes.set_xlabel( field, fontproperties = self.fp )
+		self.figure.autofmt_xdate()
+		self.canvas.draw()
+	
 	def cancelThread( self ):
 		self.threadCalc.stop()
 	
@@ -145,30 +243,20 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		
 		# enable copy to clipboard
 		QObject.disconnect( self.btnStop, SIGNAL( "clicked()" ), self.cancelThread )
-		self.btnStop.setText( self.tr ("Copy" ) )
+		self.btnStop.setText( self.tr ( "Copy" ) )
 		QObject.connect( self.btnStop, SIGNAL( "clicked()" ), self.toClipboard )
-		#self.btnStop.setEnabled( False )
 		
 		self.axes.clear()
-		self.axes.grid( True )
-		self.figure.suptitle( "Frequency distribution", fontsize = 12 )
-		self.axes.set_ylabel( "Count", fontsize = 8 )
-		self.axes.set_xlabel( "Values", fontsize = 8 )
-		x = output[ 2 ]
-		n, bins, pathes = self.axes.hist( x, 18, alpha=0.5, histtype = "bar" )
-		
-		#QMessageBox.information( self, "DEBUG n", str( n ) )
-		#QMessageBox.information( self, "DEBUG bins", str( bins ) )
-		#c = []
-		#for i in range( len( bins ) - 1 ):
-		#	s = bins[ i + 1 ] - bins[ i ]
-		#	c.append( bins[ i ] + (s / 2 ) )
-		#QMessageBox.information( self, "DEBUG means", str( c ) )
-		#QMessageBox.information( self, "DEBUG len", str( len( n ) ) + str( len( bins ) ) + str( len( c ) ) )
-		#self.axes.plot( c, n, "ro-" )
-		
+		self.axes.grid( self.chkGrid.isChecked() )
+		self.axes.set_ylabel( self.axisYTitle, fontproperties = self.fp )
+		field = unicode( self.cmbFields.currentText() )
+		self.axes.set_xlabel( field, fontproperties = self.fp )
+		self.valuesX = output[ 2 ]
+		self.axes.hist( self.valuesX, 18, alpha=0.5, histtype = "bar" )
+		self.figure.autofmt_xdate()
 		self.canvas.draw()
 		
+		self.groupBox.show()
 		return True
 	
 	def runStatusFromThread( self, status ):
@@ -271,9 +359,11 @@ class workThread( QThread ):
 			cvVal = 0
 			rVal = 0
 			medianVal = 0
+			uniqueVal = 0
 			# selection
 			if vlayer.selectedFeatureCount() != 0:
 				selFeat = vlayer.selectedFeatures()
+				uniqueVal = utils.getUniqueValsCount( vlayer, index, True )
 				nFeat = vlayer.selectedFeatureCount()
 				self.emit( SIGNAL( "runStatus(PyQt_PyObject)" ), 0 )
 				self.emit( SIGNAL( "runRange(PyQt_PyObject)" ), ( 0, nFeat ) )
@@ -292,6 +382,7 @@ class workThread( QThread ):
 					nElement += 1
 					self.emit( SIGNAL( "runStatus(PyQt_PyObject)" ), nElement )
 			else: # whole layer
+				uniqueVal = utils.getUniqueValsCount( vlayer, index, False )
 				nFeat = vprovider.featureCount()
 				self.emit( SIGNAL( "runStatus(PyQt_PyObject)" ), 0 )
 				self.emit( SIGNAL( "runRange(PyQt_PyObject)" ), ( 0, nFeat ) )
@@ -327,6 +418,7 @@ class workThread( QThread ):
 					cvVal = stdVal / meanVal
 			lstStats = []
 			lstStats.append( QCoreApplication.translate( "statResult", "Count:" ) + unicode( nVal ) )
+			lstStats.append( QCoreApplication.translate( "statResult", "Unique values:" ) + unicode( uniqueVal ) )
 			lstStats.append( QCoreApplication.translate( "statResult", "Minimum value:" ) + unicode( minVal ) )
 			lstStats.append( QCoreApplication.translate( "statResult", "Maximum value:" ) + unicode( maxVal ) )
 			lstStats.append( QCoreApplication.translate( "statResult", "Swing:" ) + unicode( rVal ) )
@@ -334,5 +426,5 @@ class workThread( QThread ):
 			lstStats.append( QCoreApplication.translate( "statResult", "Mean value:" ) + unicode( meanVal ) )
 			lstStats.append( QCoreApplication.translate( "statResult", "Median value:" ) + unicode( medianVal ) )
 			lstStats.append( QCoreApplication.translate( "statResult", "Standard deviation:" ) + unicode( stdVal ) )
-			lstStats.append( QCoreApplication.translate( "statResult", "CV:" ) + unicode( cvVal ))
+			lstStats.append( QCoreApplication.translate( "statResult", "Coefficient of Variation:" ) + unicode( cvVal ))
 			return ( lstStats, [], values )
