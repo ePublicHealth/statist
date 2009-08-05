@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'frmStatist.ui'
 #
-# Created: Wed Jul 29 21:35:51 2009
+# Created: Wed Aug 05 18:15:59 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,12 +12,13 @@ from PyQt4 import QtCore, QtGui
 class Ui_dlgStatistics(object):
     def setupUi(self, dlgStatistics):
         dlgStatistics.setObjectName("dlgStatistics")
-        dlgStatistics.resize(744, 420)
+        dlgStatistics.resize(814, 434)
         dlgStatistics.setSizeGripEnabled(True)
         self.horizontalLayout_2 = QtGui.QHBoxLayout(dlgStatistics)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.widgetStats = QtGui.QWidget(dlgStatistics)
         self.widgetStats.setMinimumSize(QtCore.QSize(341, 331))
+        self.widgetStats.setMaximumSize(QtCore.QSize(360, 16777215))
         self.widgetStats.setObjectName("widgetStats")
         self.gridLayout = QtGui.QGridLayout(self.widgetStats)
         self.gridLayout.setObjectName("gridLayout")
@@ -77,13 +78,18 @@ class Ui_dlgStatistics(object):
         self.widgetPlot.setSizePolicy(sizePolicy)
         self.widgetPlot.setMinimumSize(QtCore.QSize(340, 330))
         self.widgetPlot.setObjectName("widgetPlot")
-        self.gridLayout_2 = QtGui.QGridLayout(self.widgetPlot)
-        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.verticalLayout = QtGui.QVBoxLayout(self.widgetPlot)
+        self.verticalLayout.setObjectName("verticalLayout")
         self.layoutPlot = QtGui.QVBoxLayout()
         self.layoutPlot.setObjectName("layoutPlot")
-        self.gridLayout_2.addLayout(self.layoutPlot, 0, 0, 1, 1)
+        self.verticalLayout.addLayout(self.layoutPlot)
         self.groupBox = QtGui.QGroupBox(self.widgetPlot)
-        self.groupBox.setMaximumSize(QtCore.QSize(361, 65))
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
+        self.groupBox.setSizePolicy(sizePolicy)
+        self.groupBox.setMaximumSize(QtCore.QSize(361, 16777215))
         self.groupBox.setObjectName("groupBox")
         self.gridLayout_3 = QtGui.QGridLayout(self.groupBox)
         self.gridLayout_3.setObjectName("gridLayout_3")
@@ -118,7 +124,7 @@ class Ui_dlgStatistics(object):
         self.gridLayout_3.addWidget(self.chkPlot, 1, 5, 1, 1)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout_3.addItem(spacerItem, 0, 4, 1, 1)
-        self.gridLayout_2.addWidget(self.groupBox, 1, 0, 1, 1)
+        self.verticalLayout.addWidget(self.groupBox)
         self.horizontalLayout_2.addWidget(self.widgetPlot)
 
         self.retranslateUi(dlgStatistics)

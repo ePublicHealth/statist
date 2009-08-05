@@ -48,9 +48,9 @@ class dlgAbout( QDialog, Ui_dlgAbout ):
 		QObject.connect( self.btnHelp, SIGNAL( "clicked()" ), self.showHelp )
 		
 		# setup labels
-		ver = "0.2.2"
-		dt = "2009-08-04"
-		rev = "9"
+		ver = "0.2.3"
+		dt = "2009-08-05"
+		rev = "11"
 		self.lblVersion.setText( self.tr( "Version: %1" ).arg( ver ) )
 		self.lblDate.setText( self.tr( "Date: %1" ).arg( dt ) )
 		self.lblRevision.setText( self.tr( "SVN revision: %1" ).arg( rev ) )
