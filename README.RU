@@ -69,6 +69,6 @@
   Помощь в разработке и улучшении Statist оказали:
     Oleg Seliverstov (http://geography.in.ua)
     Maxim Dubinin (http://gis-lab.info)
-    Denis Rukov
+    Denis Rykov
   
   И все те, кто сообщал об ошибках, присылал патчи, высказывал предложения и комментарии.

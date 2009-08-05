@@ -88,7 +88,7 @@ class dlgAbout( QDialog, Ui_dlgAbout ):
 		contribString.append( "Horst Duester and Stefan Ziegler<br>" )
 		contribString.append( "Maxim Dubinin<br>" )
 		contribString.append( "Oleg Seliverstov<br>" )
-		contribString.append( "Denis Rukov<br><br>" )
+		contribString.append( "Denis Rykov<br><br>" )
 		contribString.append( "<b>and special thanks to the QGIS team and GIS-Lab</b></p>" )
 		
 		acknowlString = QString( "<p><center><b>Statist is using following third party libraries and tools</b></center></p>" )
