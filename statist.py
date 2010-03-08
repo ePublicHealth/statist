@@ -48,15 +48,19 @@ class statistPlugin:
 
     userPluginPath = QFileInfo( QgsApplication.qgisUserDbFilePath() ).path() + "/python/plugins/statist"
     systemPluginPath = QgsApplication.prefixPath() + "/python/plugins/statist"
-    # install translator for i18n
-    localeFullName = QLocale.system().name()
+    # For i18n support
+    overrideLocale = QSettings().value( "locale/overrideFlag", QVariant( False ) ).toBool()
+    if not overrideLocale:
+      localeFullName = QLocale.system().name()
+    else:
+      localeFullName = QSettings().value( "locale/userLocale", QVariant( "" ) ).toString()
 
     if QFileInfo( userPluginPath ).exists():
-      translatePath = userPluginPath + "/i18n/statist_" + localeFullName + ".qm"
+      translationPath = userPluginPath + "/i18n/statist_" + localeFullName + ".qm"
     else:
-      translatePath = systemPluginPath + "/i18n/statist_" + localeFullName + ".qm"
+      translationPath = systemPluginPath + "/i18n/statist_" + localeFullName + ".qm"
 
-    self.localePath = translatePath
+    self.localePath = translationPath
     if QFileInfo( self.localePath ).exists():
       self.translator = QTranslator()
       self.translator.load( self.localePath )

@@ -6,7 +6,7 @@
 # A python plugin for QGIS. Provides basic statistics information
 # on any (numeric or string) field of vector layer. Works fine
 # with selected objects and whole layer.
-# 
+#
 # Based on partially rewritten 'Basic statistics' from fTools,
 # (C) 2009 Carson Farmer.
 #
@@ -49,22 +49,20 @@ try:
 except ImportError:
 	QMessageBox.warning( None, "Statist: Error", msgError )
 
-#import resources
-
 class dlgStatist( QDialog, Ui_dlgStatistics ):
 	def __init__( self, iface ):
 		QDialog.__init__( self )
 		self.iface = iface
 		self.setupUi( self )
-		
+
 		# dialog static text
 		self.plotTitle = QCoreApplication.translate( "Plot", "Frequency distribution" )
 		self.axisYTitle = QCoreApplication.translate( "Plot", "Count" )
-		
+
 		# setup table columns
 		self.tblStatistics.setColumnWidth( 0, 213 )
 		self.tblStatistics.setColumnWidth( 1, 90 )
-		
+
 		# determine font path
 		userPluginPath = QFileInfo( QgsApplication.qgisUserDbFilePath() ).path() + "/python/plugins/statist"
 		systemPluginPath = QgsApplication.prefixPath() + "/python/plugins/statist"
@@ -72,7 +70,7 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 			fontPath = userPluginPath + "/font/CharisSILR.ttf"
 		else:
 			fontPath = systemPluginPath + "/font/CharisSILR.ttf"
-		
+
 		# prepare figure
 		self.figure = Figure()
 		self.axes = self.figure.add_subplot( 111 )
@@ -80,35 +78,37 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		self.figure.suptitle( self.plotTitle, fontproperties = self.fp )
 		self.canvas = FigureCanvas( self.figure )
 		self.mpltoolbar = NavigationToolbar( self.canvas, self.widgetPlot )
+		lstActions = self.mpltoolbar.actions()
+		self.mpltoolbar.removeAction( lstAction[ 7 ] )
 		self.layoutPlot.addWidget( self.canvas )
 		self.layoutPlot.addWidget( self.mpltoolbar )
-		
+
 		# for tracking layers change
 		QObject.connect( self.cmbLayers, SIGNAL( "currentIndexChanged(QString)" ), self.updateFields )
-		
+
 		# for figure customization
 		self.groupBox.hide()
 		QObject.connect( self.chkGrid, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
 		QObject.connect( self.chkPlot, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
 		QObject.connect( self.btnRefresh, SIGNAL( "clicked()" ), self.refreshPlot )
-		
+
 		# fill layers combobox
 		self.cmbLayers.clear()
 		lstLayers = utils.getLayersNames( "vector" )
 		self.cmbLayers.addItems( lstLayers )
-		
+
 		# reset some controls to default values
 		self.cmbFields.setCurrentIndex(-1)
 		self.progressBar.setValue( 0 )
 		QObject.connect( self.cmbFields, SIGNAL( "activated(QString)" ), self.startCalculation )
 		QObject.connect( self.chkUseTextFields, SIGNAL( "stateChanged(int)" ), self.updateFields )
-	
+
 	def updateFields( self ):
 		self.cmbFields.clear()
-		
+
 		self.tblStatistics.clearContents()
 		self.tblStatistics.setRowCount( 0 )
-		
+
 		QObject.disconnect( self.chkGrid, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
 		QObject.disconnect( self.chkPlot, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
 		self.edMinX.setValue( 0.0 )
@@ -119,7 +119,7 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		self.axes.clear()
 		QObject.connect( self.chkGrid, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
 		QObject.connect( self.chkPlot, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
-		
+
 		layName = unicode( self.cmbLayers.currentText() )
 		if layName != "":
 			vLayer = utils.getVectorLayerByName( layName )
@@ -133,7 +133,7 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 					if lstFields[i].type() == QVariant.Int or lstFields[i].type() == QVariant.Double:
 						self.cmbFields.addItem( unicode( lstFields[i].name() ) )
 			self.cmbFields.setCurrentIndex(-1)
-	
+
 	def startCalculation( self ):
 		QObject.disconnect( self.chkGrid, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
 		QObject.disconnect( self.chkPlot, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
@@ -144,7 +144,7 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		self.axes.clear()
 		QObject.connect( self.chkGrid, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
 		QObject.connect( self.chkPlot, SIGNAL( "stateChanged(int)" ), self.refreshPlot )
-		
+
 		if self.cmbLayers.currentText() == "":
 			QMessageBox.information( self, "Statist: Error", self.tr( "Please specify target vector layer first" ) )
 		elif self.cmbFields.currentText() == "":
@@ -152,7 +152,7 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		else:
 			vlayer = utils.getVectorLayerByName( self.cmbLayers.currentText() )
 			self.calculate( self.cmbLayers.currentText(), self.cmbFields.currentText() )
-	
+
 	def calculate( self, layerName, fieldName ):
 		vLayer = utils.getVectorLayerByName( layerName )
 		self.tblStatistics.clearContents()
@@ -161,22 +161,22 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		QObject.connect( self.threadCalc, SIGNAL( "runFinished(PyQt_PyObject)" ), self.runFinishedFromThread )
 		QObject.connect( self.threadCalc, SIGNAL( "runStatus(PyQt_PyObject)" ), self.runStatusFromThread )
 		QObject.connect( self.threadCalc, SIGNAL( "runRange(PyQt_PyObject)" ), self.runRangeFromThread )
-		
+
 		QObject.disconnect( self.btnStop, SIGNAL( "clicked()" ), self.toClipboard )
 		self.btnStop.setText( self.tr( "Cancel" ) )
 		QObject.connect( self.btnStop, SIGNAL("clicked()" ), self.cancelThread )
 		self.btnStop.setEnabled( True )
-		
+
 		self.threadCalc.start()
 		return True
-	
+
 	def toClipboard( self ):
 		txt = ""
 		for i in range( len( self.results ) ):
 			txt += self.results[ i ] + "\n"
 		clipboard = QApplication.clipboard()
 		clipboard.setText( txt )
-	
+
 	def refreshPlot( self ):
 		self.axes.clear()
 		self.axes.grid( self.chkGrid.isChecked() )
@@ -193,7 +193,7 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 				for i in range( len( bins ) - 1 ):
 					s = bins[ i + 1 ] - bins[ i ]
 					c.append( bins[ i ] + (s / 2 ) )
-				
+
 				self.axes.plot( c, n, "ro-" )
 		else:
 			xRange = []
@@ -215,7 +215,7 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 				for i in range( len( bins ) - 1 ):
 					s = bins[ i + 1 ] - bins[ i ]
 					c.append( bins[ i ] + (s / 2 ) )
-				
+
 				self.axes.plot( c, n, "ro-" )
 				self.axes.set_xlim( xRange[ 0 ], xRange[ 1 ] )
 		self.axes.set_ylabel( self.axisYTitle, fontproperties = self.fp )
@@ -223,14 +223,14 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		self.axes.set_xlabel( field, fontproperties = self.fp )
 		self.figure.autofmt_xdate()
 		self.canvas.draw()
-	
+
 	def cancelThread( self ):
 		self.threadCalc.stop()
-	
+
 	def runFinishedFromThread( self, output ):
 		self.threadCalc.stop()
 		self.results = output[ 0 ]
-		
+
 		n = len( self.results )
 		self.tblStatistics.setRowCount( n )
 		for r in range( n ):
@@ -240,12 +240,12 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 			item = QTableWidgetItem( tmp[ 1 ] )
 			self.tblStatistics.setItem( r, 1, item )
 		self.tblStatistics.verticalHeader().hide()
-		
+
 		# enable copy to clipboard
 		QObject.disconnect( self.btnStop, SIGNAL( "clicked()" ), self.cancelThread )
 		self.btnStop.setText( self.tr ( "Copy" ) )
 		QObject.connect( self.btnStop, SIGNAL( "clicked()" ), self.toClipboard )
-		
+
 		self.axes.clear()
 		self.axes.grid( self.chkGrid.isChecked() )
 		self.axes.set_ylabel( self.axisYTitle, fontproperties = self.fp )
@@ -255,16 +255,16 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		self.axes.hist( self.valuesX, 18, alpha=0.5, histtype = "bar" )
 		self.figure.autofmt_xdate()
 		self.canvas.draw()
-		
+
 		self.groupBox.show()
 		return True
-	
+
 	def runStatusFromThread( self, status ):
 		self.progressBar.setValue( status )
-	
+
 	def runRangeFromThread( self, range_vals ):
 		self.progressBar.setRange( range_vals[ 0 ], range_vals[ 1 ] )
-	
+
 class workThread( QThread ):
 	def __init__( self, parentThread, parentObject, vlayer, fieldName ):
 		QThread.__init__( self, parentThread )
@@ -272,16 +272,16 @@ class workThread( QThread ):
 		self.running = False
 		self.vlayer = vlayer
 		self.fieldName = fieldName
-	
+
 	def run( self ):
 		self.running = True
 		( lst, cnt, val ) = self.statistics( self.vlayer, self.fieldName )
 		self.emit( SIGNAL( "runFinished(PyQt_PyObject)" ), ( lst, cnt, val ) )
 		self.emit( SIGNAL( "runStatus(PyQt_PyObject)" ), 0 )
-	
+
 	def stop( self ):
 		self.running = False
-	
+
 	def statistics( self, vlayer, fieldName ):
 		vprovider = vlayer.dataProvider()
 		allAttrs = vprovider.attributeIndexes()

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-mVersion = "0.2.4"
+mVersion = "0.2.5"
 #*****************************************************************************************************************
 # Statist
 # --------------------------------------------------
 # A python plugin for QGIS. Provides basic statistics information
 # on any (numeric or string) field of vector layer. Works fine
 # with selected objects and whole layer.
-# 
+#
 # Based on partially rewritten 'Basic statistics' from fTools,
 # (C) 2009 Carson Farmer.
 #
@@ -40,7 +40,7 @@ def version():
 
 def qgisMinimumVersion():
 	return "1.0"
-	
+
 def authorName():
 	return "Alexander Bruy"
 
