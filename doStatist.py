@@ -79,7 +79,7 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		self.canvas = FigureCanvas( self.figure )
 		self.mpltoolbar = NavigationToolbar( self.canvas, self.widgetPlot )
 		lstActions = self.mpltoolbar.actions()
-		self.mpltoolbar.removeAction( lstAction[ 7 ] )
+		self.mpltoolbar.removeAction( lstActions[ 7 ] )
 		self.layoutPlot.addWidget( self.canvas )
 		self.layoutPlot.addWidget( self.mpltoolbar )
 
