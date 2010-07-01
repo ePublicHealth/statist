@@ -6,7 +6,7 @@
 # A python plugin for QGIS. Provides basic statistics information
 # on any (numeric or string) field of vector layer. Works fine
 # with selected objects and whole layer.
-# 
+#
 # Based on partially rewritten 'Basic statistics' from fTools,
 # (C) 2009 Carson Farmer.
 #
@@ -42,20 +42,20 @@ class dlgAbout( QDialog, Ui_dlgAbout ):
 		QDialog.__init__( self )
 		self.iface = iface
 		self.setupUi( self )
-		
+
 		self.tabWidget.setCurrentIndex( 0 )
 		self.btnHelp = self.buttonBox.button( QDialogButtonBox.Help )
 		QObject.connect( self.btnHelp, SIGNAL( "clicked()" ), self.showHelp )
-		
+
 		# setup labels
-		ver = "0.2.3"
+		ver = "0.2.9"
 		dt = "2009-08-05"
-		rev = "11"
+		rev = "17"
 		self.lblVersion.setText( self.tr( "Version: %1" ).arg( ver ) )
 		self.lblDate.setText( self.tr( "Date: %1" ).arg( dt ) )
 		self.lblRevision.setText( self.tr( "SVN revision: %1" ).arg( rev ) )
 		#self.lblLogo.setPixmap( QPixmap( ":/icons/default/statist_logo.png" ) )
-		
+
 		# setup texts
 		aboutString = QString( "The goal of Statist is to provide some basic statistic information for " )
 		aboutString.append( "the selected field of vector layer, in text and graphical (frequency " )
@@ -82,7 +82,7 @@ class dlgAbout( QDialog, Ui_dlgAbout ):
 		aboutString.append( "at http://www.gnu.org/copyleft/gpl.html. You can also obtain it by writing ")
 		aboutString.append( "to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, ")
 		aboutString.append( "MA 02111-1307, USA.")
-		
+
 		contribString = QString( "<p><center><b>The following people contributed to Statist:</b></center></p>" )
 		contribString.append( "<p>Carson J. Q. Farmer<br>" )
 		contribString.append( "Horst Duester and Stefan Ziegler<br>" )
@@ -90,7 +90,7 @@ class dlgAbout( QDialog, Ui_dlgAbout ):
 		contribString.append( "Oleg Seliverstov<br>" )
 		contribString.append( "Denis Rykov<br><br>" )
 		contribString.append( "<b>and special thanks to the QGIS team and GIS-Lab</b></p>" )
-		
+
 		acknowlString = QString( "<p><center><b>Statist is using following third party libraries and tools</b></center></p>" )
 		acknowlString.append( "<p><b>Component libraries:</b><p>" )
 		acknowlString.append( "<p>matplotlib - Python 2D plotting library<br>" )
@@ -101,12 +101,12 @@ class dlgAbout( QDialog, Ui_dlgAbout ):
 		acknowlString.append( "<p><b>Fonts:</b><p>" )
 		acknowlString.append( "<p>Charis SIL font family<br>" )
 		acknowlString.append( '<a href="http://scripts.sil.org/">http://scripts.sil.org/</a></p>' )
-		
+
 		# write texts
 		self.memAbout.setText( aboutString )
 		self.memContrib.setText( contribString )
 		self.memAcknowl.setText( acknowlString )
-	
+
 	def showHelp( self ):
 		localeFullName = QLocale.system().name()
 		localeShortName = localeFullName[ 0:2 ]
@@ -121,5 +121,5 @@ class dlgAbout( QDialog, Ui_dlgAbout ):
 		#	helpPath = userPluginPath + "/doc/help_" + localeShortName + ".html"
 		#else:
 		#	helpPath = systemPluginPath + "/doc/help_" + localeShortName + ".html"
-		
+
 		#webbrowser.open( fontPath )

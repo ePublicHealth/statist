@@ -295,7 +295,7 @@ class workThread( QThread ):
 		nElement = 0
 		meanVal = 0
 		sumVal = 0
-		if utils.getFieldType( vlayer, fieldName ) == 'String':
+		if utils.getFieldType( vlayer, fieldName ) in ( 'String', 'varchar', 'char', 'text' ):
 			fillVal = 0
 			emptyVal = 0
 			if vlayer.selectedFeatureCount() != 0:
@@ -360,6 +360,8 @@ class workThread( QThread ):
 			rVal = 0
 			medianVal = 0
 			uniqueVal = 0
+			maxVal = 0.00
+			minVal = 0.00
 			# selection
 			if vlayer.selectedFeatureCount() != 0:
 				selFeat = vlayer.selectedFeatures()
@@ -386,6 +388,7 @@ class workThread( QThread ):
 				nFeat = vprovider.featureCount()
 				self.emit( SIGNAL( "runStatus(PyQt_PyObject)" ), 0 )
 				self.emit( SIGNAL( "runRange(PyQt_PyObject)" ), ( 0, nFeat ) )
+				vprovider.select( allAttrs )
 				while vprovider.nextFeature( feat ):
 					atMap = feat.attributeMap()
 					value = float( atMap[ index ].toDouble() [ 0 ] )
