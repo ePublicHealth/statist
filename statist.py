@@ -6,7 +6,7 @@
 # A python plugin for QGIS. Provides basic statistics information
 # on any (numeric or string) field of vector layer. Works fine
 # with selected objects and whole layer.
-# 
+#
 # Based on partially rewritten 'Basic statistics' from fTools,
 # (C) 2009 Carson Farmer.
 #
@@ -46,9 +46,10 @@ class statistPlugin:
     except:
       self.QgisVersion = unicode( QGis.qgisVersion )[ 0 ]
 
+    # For i18n support
     userPluginPath = QFileInfo( QgsApplication.qgisUserDbFilePath() ).path() + "/python/plugins/statist"
     systemPluginPath = QgsApplication.prefixPath() + "/python/plugins/statist"
-    # For i18n support
+
     overrideLocale = QSettings().value( "locale/overrideFlag", QVariant( False ) ).toBool()
     if not overrideLocale:
       localeFullName = QLocale.system().name()

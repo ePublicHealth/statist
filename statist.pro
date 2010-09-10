@@ -6,5 +6,6 @@ SOURCES = __init__.py \
   frmAbout.py \
   resources.py
 
-TRANSLATIONS = i18n/statist_ru.ts \
-  i18n/statist_ua.ts
+TRANSLATIONS = i18n/statist_ru_RU.ts \
+               i18n/statist_uk_UA.ts \
+               i18n/statist_fr_FR.ts

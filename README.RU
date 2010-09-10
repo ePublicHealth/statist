@@ -70,5 +70,6 @@
     Oleg Seliverstov (http://geography.in.ua)
     Maxim Dubinin (http://gis-lab.info)
     Denis Rykov
+    JC Notter
   
   И все те, кто сообщал об ошибках, присылал патчи, высказывал предложения и комментарии.
