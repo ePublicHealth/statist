@@ -124,6 +124,11 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		if layName != "":
 			vLayer = utils.getVectorLayerByName( layName )
 			lstFields = vLayer.dataProvider().fields()
+			if vLayer.selectedFeatureCount() != 0:
+				self.chkUseSelected.setCheckState( Qt.Checked )
+			else:
+				self.chkUseSelected.setCheckState( Qt.Unchecked )
+
 			if self.chkUseTextFields.checkState(): # only numeric fields
 				for i in lstFields:
 					if lstFields[i].type() == QVariant.String:
@@ -157,7 +162,7 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		vLayer = utils.getVectorLayerByName( layerName )
 		self.tblStatistics.clearContents()
 		self.tblStatistics.setRowCount( 0 )
-		self.threadCalc = workThread( self.iface.mainWindow(), self, vLayer, fieldName )
+		self.threadCalc = workThread( self.iface.mainWindow(), self, vLayer, fieldName, self.chkUseSelected.checkState() )
 		QObject.connect( self.threadCalc, SIGNAL( "runFinished(PyQt_PyObject)" ), self.runFinishedFromThread )
 		QObject.connect( self.threadCalc, SIGNAL( "runStatus(PyQt_PyObject)" ), self.runStatusFromThread )
 		QObject.connect( self.threadCalc, SIGNAL( "runRange(PyQt_PyObject)" ), self.runRangeFromThread )
@@ -266,12 +271,13 @@ class dlgStatist( QDialog, Ui_dlgStatistics ):
 		self.progressBar.setRange( range_vals[ 0 ], range_vals[ 1 ] )
 
 class workThread( QThread ):
-	def __init__( self, parentThread, parentObject, vlayer, fieldName ):
+	def __init__( self, parentThread, parentObject, vlayer, fieldName, useSelection ):
 		QThread.__init__( self, parentThread )
 		self.parent = parentObject
 		self.running = False
 		self.vlayer = vlayer
 		self.fieldName = fieldName
+		self.useSelection = useSelection
 
 	def run( self ):
 		self.running = True
@@ -298,7 +304,8 @@ class workThread( QThread ):
 		if utils.getFieldType( vlayer, fieldName ) in ( 'String', 'varchar', 'char', 'text' ):
 			fillVal = 0
 			emptyVal = 0
-			if vlayer.selectedFeatureCount() != 0:
+			#if vlayer.selectedFeatureCount() != 0:
+			if self.useSelection:
 				selFeat = vlayer.selectedFeatures()
 				nFeat = vlayer.selectedFeatureCount()
 				self.emit( SIGNAL( "runStatus(PyQt_PyObject)" ), 0 )
@@ -363,7 +370,8 @@ class workThread( QThread ):
 			maxVal = 0.00
 			minVal = 0.00
 			# selection
-			if vlayer.selectedFeatureCount() != 0:
+			#if vlayer.selectedFeatureCount() != 0:
+			if self.useSelection:
 				selFeat = vlayer.selectedFeatures()
 				uniqueVal = utils.getUniqueValsCount( vlayer, index, True )
 				nFeat = vlayer.selectedFeatureCount()

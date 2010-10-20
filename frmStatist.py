@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'frmStatist.ui'
 #
-# Created: Wed Aug 05 18:15:59 2009
-#      by: PyQt4 UI code generator 4.4.4
+# Created: Wed Oct 20 21:35:29 2010
+#      by: PyQt4 UI code generator 4.5.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -30,20 +30,20 @@ class Ui_dlgStatistics(object):
         self.gridLayout.addWidget(self.cmbLayers, 1, 0, 1, 2)
         self.lblField = QtGui.QLabel(self.widgetStats)
         self.lblField.setObjectName("lblField")
-        self.gridLayout.addWidget(self.lblField, 2, 0, 1, 2)
+        self.gridLayout.addWidget(self.lblField, 3, 0, 1, 2)
         self.cmbFields = QtGui.QComboBox(self.widgetStats)
         self.cmbFields.setObjectName("cmbFields")
-        self.gridLayout.addWidget(self.cmbFields, 3, 0, 1, 2)
+        self.gridLayout.addWidget(self.cmbFields, 4, 0, 1, 2)
         self.chkUseTextFields = QtGui.QCheckBox(self.widgetStats)
         self.chkUseTextFields.setObjectName("chkUseTextFields")
-        self.gridLayout.addWidget(self.chkUseTextFields, 4, 0, 1, 2)
+        self.gridLayout.addWidget(self.chkUseTextFields, 5, 0, 1, 2)
         self.lblResult = QtGui.QLabel(self.widgetStats)
         self.lblResult.setObjectName("lblResult")
-        self.gridLayout.addWidget(self.lblResult, 5, 0, 1, 2)
+        self.gridLayout.addWidget(self.lblResult, 6, 0, 1, 2)
         self.progressBar = QtGui.QProgressBar(self.widgetStats)
         self.progressBar.setProperty("value", QtCore.QVariant(24))
         self.progressBar.setObjectName("progressBar")
-        self.gridLayout.addWidget(self.progressBar, 7, 0, 1, 1)
+        self.gridLayout.addWidget(self.progressBar, 8, 0, 1, 1)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.btnStop = QtGui.QPushButton(self.widgetStats)
@@ -55,7 +55,7 @@ class Ui_dlgStatistics(object):
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Close)
         self.buttonBox.setObjectName("buttonBox")
         self.horizontalLayout.addWidget(self.buttonBox)
-        self.gridLayout.addLayout(self.horizontalLayout, 7, 1, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout, 8, 1, 1, 1)
         self.tblStatistics = QtGui.QTableWidget(self.widgetStats)
         self.tblStatistics.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
         self.tblStatistics.setAlternatingRowColors(True)
@@ -68,7 +68,10 @@ class Ui_dlgStatistics(object):
         self.tblStatistics.setHorizontalHeaderItem(0, item)
         item = QtGui.QTableWidgetItem()
         self.tblStatistics.setHorizontalHeaderItem(1, item)
-        self.gridLayout.addWidget(self.tblStatistics, 6, 0, 1, 2)
+        self.gridLayout.addWidget(self.tblStatistics, 7, 0, 1, 2)
+        self.chkUseSelected = QtGui.QCheckBox(self.widgetStats)
+        self.chkUseSelected.setObjectName("chkUseSelected")
+        self.gridLayout.addWidget(self.chkUseSelected, 2, 0, 1, 2)
         self.horizontalLayout_2.addWidget(self.widgetStats)
         self.widgetPlot = QtGui.QWidget(dlgStatistics)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -141,6 +144,7 @@ class Ui_dlgStatistics(object):
         self.btnStop.setText(QtGui.QApplication.translate("dlgStatistics", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
         self.tblStatistics.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("dlgStatistics", "Parameter", None, QtGui.QApplication.UnicodeUTF8))
         self.tblStatistics.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("dlgStatistics", "Value", None, QtGui.QApplication.UnicodeUTF8))
+        self.chkUseSelected.setText(QtGui.QApplication.translate("dlgStatistics", "Use only selected features", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("dlgStatistics", "Xmin", None, QtGui.QApplication.UnicodeUTF8))
         self.btnRefresh.setText(QtGui.QApplication.translate("dlgStatistics", "Refresh", None, QtGui.QApplication.UnicodeUTF8))
         self.chkGrid.setText(QtGui.QApplication.translate("dlgStatistics", "Show grid", None, QtGui.QApplication.UnicodeUTF8))

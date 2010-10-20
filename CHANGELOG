@@ -3,6 +3,10 @@
 [+] add
 [-] remove/bugfix
 
+20.10.2010
+  [+] checkbox for controlling selection usage
+  [-] automatic selection control
+
 05.08.2009
   [-] small fix in contributors list
   [*] fixes in GUI (increase plot area)
