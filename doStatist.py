@@ -419,7 +419,7 @@ class workThread( QThread ):
 				if ( nVal % 2 ) == 0:
 					medianVal = 0.5 * ( lstVal[ ( nVal - 1 )/ 2 ] + lstVal[ ( nVal ) / 2 ] )
 				else:
-					medianVal = lstVal[ ( nVal + 1 ) / 2 ]
+					medianVal = lstVal[ ( nVal + 1 ) / 2  - 1 ]
 			if nVal > 0.00:
 				meanVal = sumVal / nVal
 				if meanVal != 0.00:
