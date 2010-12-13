@@ -44,6 +44,9 @@ def qgisMinimumVersion():
 def authorName():
 	return "Alexander Bruy"
 
+def icon():
+	return "icons/statist.png"
+
 def classFactory( iface ):
 	from statist import statistPlugin
 	return statistPlugin( iface )
